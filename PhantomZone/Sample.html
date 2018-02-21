@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Graphics town framework code by Mike Gleicher
+  -- written October, 2015
+  -->
+<head>
+    <meta charset="UTF-8">
+    <title>GraphicsTown JS 2017- PhantomZone!</title>
+</head>
+
+<style>
+body {
+    background-color: #191919;
+    color: white;
+/*    text-align: justify;*/
+    
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: auto;
+
+    font-style: italic;
+    font-family: florence, cursive;
+    font-variant: small-caps;
+}
+</style>
+
+<body>
+<!-- load this stuff first -->
+<script src="Libraries/twgl-full.js"></script>
+<script src="Libraries/panel.js"></script>
+<script src="Libraries/arcball.js"></script>
+<script src="grobject.js"></script>
+<script src="ExampleObjects/ground.js"></script>
+
+<!-- This is where we load the objects for the world -->
+<!-- <script src="ExampleObjects/phntmTreeEx.js"></script> -->
+<script src="ExampleObjects/bumperCue1.0.js"></script>
+
+<!--script src="welcome.js"></script>
+<!-- This gets loaded LAST (actually, it probably doesn't have to) -->
+<script src="graphicstown.js"></script>
+</body>
+
+<!-- all of the shaders get stuck here in the HTML because
+  -- that's the only way I know to load them without either
+  -- sticking them in JavaScript strings, or using a web server
+  -->
+
+
+<script id="general-vs" type="notjs">
+// specialized shader for the simple sphere
+// we assume that the model matrix works as the normal
+//      matrix - this only is try if the model matrix
+//      it a rotate/translate
+//      (uniform scale is OK since we re-normalize)
+// color is solid
+// simple lighting
+    precision highp float;
+    attribute vec3 vpos;
+    attribute vec3 vnormal;
+    attribute vec3 vindex;
+    attribute vec2 vText;
+    varying vec3 outColor;
+    varying vec3 fPosition;
+    varying vec3 fNormal;
+
+    attribute vec2 vTexCoord;
+    varying vec2 fTexCoord;
+    uniform mat4 uMV;
+
+    uniform mat4 view;
+    uniform mat4 proj;
+    uniform mat4 model;
+    uniform vec3 lightdir;
+    uniform vec3 color;
+
+    void main(void) {
+        gl_Position = proj * view * model * vec4(vpos, 1.0);
+        vec4 normal = normalize(model * vec4(vnormal,0.0));
+        fPosition = (uMV * vec4(vpos,1.0)).xyz;
+        float diffuse = .5 + .5*abs(dot(normal, vec4(lightdir,0.0)));
+        float ambient = .05 + .85*abs(dot(normal+diffuse, vec4(lightdir,1.0)));
+
+        outColor = color * (diffuse * ambient);
+        //fTexCoord = vTexCoord;
+    }
+</script>
+<script id="general-fs" type="notjs">
+// simple shader that does vertex coloring
+//  (e.g. the vertex shader figures the lighting
+// note this is used for more than just the sphere
+    precision highp float;
+    varying vec3 outColor;
+    varying vec3 fNormal;
+    varying vec3 fPosition;
+    uniform mat4 uMVn;
+
+    varying vec2 fTexCoord;
+    uniform sampler2D texSampler1;
+    uniform sampler2D texSampler2;
+
+    const vec3 lightV = vec3(0.0,1.0,0.0);
+    const float lightI = 1.0;
+    const float ambientC = 0.25;
+    const float diffuseC = 0.3;
+    const float specularC = 1.0;
+    const float specularE = 16.0;
+    const vec3 lightCol = vec3(1.0,1.0,1.0);
+    const vec3 objectColor = vec3(1.0,0.6,0.0);
+
+    vec2 phongDir(vec3 lightDir, vec3 n, float lightInt, float Ka, float Kd, float Ks, float shininess) {
+        vec3 s = normalize(lightDir);
+        vec3 v = normalize(-fPosition);
+        vec3 h = normalize(v+s);
+        float diffuse = Ka + Kd * lightInt * max(0.0, dot(n,s));
+        float spec = Ks * pow(max(0.0, dot(n,h)), shininess);
+        return vec2(diffuse, spec);
+    }
+
+    void main(void) {
+        vec3 dNormal = texture2D(texSampler2,fTexCoord).xyz;
+        vec3 n_perturbed = normalize(dNormal+fNormal);
+        vec3 n = (uMVn * vec4(n_perturbed, 0.0)).xyz;
+
+        vec3 ColorS = phongDir(lightV,n,0.0,0.0,0.0, specularC,specularE).y*lightCol;
+        vec3 ColorAD = phongDir(lightV,n,lightI,ambientC,diffuseC,0.0, 1.0).x*outColor;
+
+        gl_FragColor = vec4(ColorAD+ColorS,1.0);
+    }
+</script>
+
+<!--
+<script id="tree-vs" type="notjs">
+// specialized shader for the simple sphere
+// we assume that the model matrix works as the normal
+//      matrix - this only is try if the model matrix
+//      it a rotate/translate
+//      (uniform scale is OK since we re-normalize)
+// color is solid
+// simple lighting
+    
+    attribute vec3 vpos;
+    attribute vec3 vnormal;
+    attribute vec2 vtexture;
+
+    uniform mat4 uMVn;
+
+    varying vec2 vtex_coord;
+    varying vec2 ftex_coord;
+
+    uniform mat4 view;
+    uniform mat4 proj;
+    uniform mat4 model;
+    uniform vec3 lightdir;
+    uniform vec3 color;
+
+    void main(void) {
+        gl_Position = uMVn * position;
+
+        // Pass info to Frag. Shader
+        vtex_coord = vtexture;
+    }
+</script>
+<script id="tree-fs" type="notjs">
+// simple shader that does vertex coloring
+//  (e.g. the vertex shader figures the lighting
+// note this is used for more than just the sphere
+    precision highp float;
+
+    varying vec2 vtex_coord;
+    varying vec2 ftex_coord;
+
+    uniform sampler2D texture;
+
+    void main(void) {
+        vec4 texColor = texture2D(texture, ftex_coord)
+        gl_FragColor = texColor;
+
+    }
+</script>
+-->
+
+<script id="cube-vs" type="notjs">
+
+    attribute vec3 vpos;
+    attribute vec3 vnormal;
+    attribute vec2 vtexture;
+
+    varying vec3 outColor;
+    varying vec3 fPosition;
+    varying vec3 fNormal;
+
+    uniform mat4 uMVn;
+
+    varying vec2 vtex_coord;
+    varying vec2 ftex_coord;
+
+    uniform mat4 view;
+    uniform mat4 proj;
+    uniform mat4 model;
+    uniform vec3 lightdir;
+    uniform vec3 color;
+
+    void main(void) {
+        gl_Position = uMVn * vec4(vpos, 1.0);
+
+        // Pass info to Frag. Shader
+        vtex_coord = vtexture;
+    }
+</script>
+<script id="cube-fs" type="notjs">
+
+    precision highp float;
+    varying vec3 outColor;
+    varying vec3 fNormal;
+    varying vec3 fPosition;
+
+    uniform mat4 uMVn;
+
+    varying vec2 vtex_coord;
+    varying vec2 ftex_coord;
+
+    uniform sampler2D texture;
+
+    const vec3 lightV = vec3(0.0,1.0,0.0);
+    const float lightI = 1.0;
+    const float ambientC = 0.25;
+    const float diffuseC = 0.3;
+    const float specularC = 1.0;
+    const float specularE = 16.0;
+    const vec3 lightCol = vec3(1.0,1.0,1.0);
+    const vec3 objectColor = vec3(1.0,0.6,0.0);
+
+    vec2 phongDir(vec3 lightDir, vec3 n, float lightInt, float Ka, float Kd, float Ks, float shininess) {
+        vec3 s = normalize(lightDir);
+        vec3 v = normalize(-fPosition);
+        vec3 h = normalize(v+s);
+        float diffuse = Ka + Kd * lightInt * max(0.0, dot(n,s));
+        float spec = Ks * pow(max(0.0, dot(n,h)), shininess);
+        return vec2(diffuse, spec);
+    }
+
+    void main(void) {
+        vec3 dNormal = texture2D(texture,ftex_coord).xyz;
+        vec3 n_perturbed = normalize(dNormal+fNormal);
+        vec3 n = (uMVn * vec4(n_perturbed, 0.0)).xyz;
+
+        vec3 ColorS = phongDir(lightV,n,0.0,0.0,0.0, specularC,specularE).y*lightCol;
+        vec3 ColorAD = phongDir(lightV,n,lightI,ambientC,diffuseC,0.0, 1.0).x*outColor;
+
+        gl_FragColor = vec4(ColorAD+ColorS,1.0)+texture2D(texture, ftex_coord);
+
+    }
+</script>
+
+
+<!-- Special Ground Plane Shader - makes a boring
+  -- checkerboard
+  -->
+<script id="ground-vs" type="not-js">
+    precision highp float;
+
+    attribute vec3 vpos;
+    varying vec3 outPos;
+
+    uniform mat4 view;
+    uniform mat4 proj;
+
+    void main(void) {
+        gl_Position = proj * view * vec4(vpos, 1.0);
+        outPos = vpos;
+    }
+</script>
+<script id="ground-fs" type="notjs">
+    // note this is used for more than just the cube
+    precision highp float;
+    varying vec3 outPos;
+    uniform float time;
+
+    void main(void) {
+        float xs = step(1.0,mod(outPos.x,2.0));
+        float zs = step(1.0,mod(outPos.z,2.0));
+        float ss = (xs>.5) ? zs : 1.0-zs;
+        gl_FragColor =mix(vec4(0.2,0.6,0.2,1), //Lighter Green
+                           vec4(0.2,0.4,0.3,1), //Dark Green
+                           ss
+                           );
+
+    }
+</script>
+
+</html>
