@@ -1,0 +1,219 @@
+<!DOCTYPE html> <!-- This specifies that it is an html document -->
+<!-- "html" tags signify that this starts html code -->
+<html> 
+
+<!-- This is the Header Section-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <!-- Title tags show us what will be displayed in title bar upon opening the page in browser -->
+  <title>My Coding Assignment: Project #1
+  </title> <!-- TODO: Add number --> 
+</head>
+
+<!-- "body" tags show us what will be displayed on the page -->
+
+<!-- This is the initiation of our canvas -->
+<body><center>
+  <canvas id="myCanvas" width="500" height="400">
+  your browser doesn't support canvas!
+  </canvas>
+  </center>
+</body>
+
+<br/>
+  <!-- Adding slider element from "When do I draw?" tutorial -->
+  <p> Mr. Stix </p>
+  <input id="stix" type="range" min="45" max="495" />
+  <p> Mr. Cloud </p>
+  <input id="clouds" type="range" min="215" max="520" />
+
+<!-- This is where we will draw -->
+<body>
+<!-- "script" tag denotes where javascript code will go -->
+<script>
+    // This grabs a variable pointed to our initiated canvas
+    var canvas = document.getElementById('myCanvas');
+    var content = canvas.getContext('2d');
+
+    // Sliders
+    var stix = document.getElementById('stix');
+    var clouds = document.getElementById('clouds');
+
+    // Preset Values
+    stix.value = 270;
+    clouds.value = 370;
+
+function setup() { "use strict";
+    
+    drawBack();
+    drawMan();
+    drawClouds();
+
+function drawBack() {
+	// Clear any previous canvas drawings
+	content.clearRect(0, 0, myCanvas.width,myCanvas.height);
+
+    // Color the background
+	var gradient=content.createLinearGradient(0,235,0,260);
+	gradient.addColorStop(0,"cyan");
+	gradient.addColorStop(1,"lime");
+	content.fillStyle=gradient;
+	content.fillRect(0,0,500,400);
+
+	// Road
+	content.beginPath();
+	content.moveTo(0,300);
+	content.lineTo(500,300);
+	content.lineWidth = 20;
+
+	content.strokeStyle = 'silver';
+	content.stroke();
+
+	// Sun (ball)
+	content.beginPath();
+    content.arc(500,5,65,0,2*Math.PI);
+    content.fillStyle= 'gold';
+    content.fill();
+    content.lineWidth = 3;
+    content.strokeStyle = 'yellow';
+    content.stroke();
+    // Sun (rays)
+    content.beginPath();
+    content.moveTo(425,15);
+    content.lineTo(400,15);
+    content.moveTo(435,45);
+    content.lineTo(415,55);
+    content.moveTo(460,70);
+    content.lineTo(445,90);
+    content.moveTo(485,80);
+    content.lineTo(485,105);
+    content.lineWidth = 8;
+    content.strokeStyle = 'gold';
+    content.stroke();
+}
+
+function drawMan() {
+	
+    var x = stix.value;
+    //StickMan
+
+    // Head
+    content.fillStyle= 'red';
+    content.lineWidth = 3;
+    content.strokeStyle = 'crimson';
+    
+    content.beginPath();
+    content.arc(x-20,185,25,0,2*Math.PI);
+    content.fill();
+    content.stroke();
+    // Face
+
+        // eyes
+    content.fillStyle= 'black';
+    content.strokeStyle = 'lightgrey';
+
+    content.beginPath();
+    content.arc(x-33,180,4,0,2*Math.PI);
+    content.fill();
+    content.stroke();
+    content.beginPath();
+    content.arc(x-7,180,4,0,2*Math.PI);
+    content.fill();
+    content.stroke();
+        
+        // mouth
+    content.strokeStyle = 'white';
+
+    content.beginPath();
+    content.arc(x-20,190,10,0,3/5*Math.PI);
+    content.stroke();
+
+    // Body
+    content.lineWidth = 10;
+    content.strokeStyle = 'red';
+
+    content.beginPath();
+    content.moveTo(x-20,210);
+    content.lineTo(x-20,260);
+    
+        // Arms
+    content.moveTo(x-20,233);
+    content.lineTo(x-40,253);
+    content.moveTo(x-20,233);
+    content.lineTo(x,213);
+        // Legs
+    content.moveTo(x-20,260);
+    content.lineTo(x-40,300);
+    content.moveTo(x-20,260);
+    content.lineTo(x,300);
+    content.stroke();
+
+}
+
+function drawClouds() {
+
+    var y = clouds.value;
+
+    // Denote the styles of cloud
+    content.lineWidth = 3;
+    content.strokeStyle = 'lightgrey';
+    content.fillStyle= 'silver';
+
+    // Cloud
+    content.beginPath();
+    content.ellipse(y-180,50,50,25,0,0,2*Math.PI);
+    content.fill();
+    content.stroke();
+
+    
+    content.beginPath();
+    content.ellipse(y-60,50,50,25,0,0,2*Math.PI);
+    content.fill();
+    content.stroke();
+
+    content.beginPath();
+    content.ellipse(y-240,100,50,25,0,0,2*Math.PI);
+    content.fill();
+    content.stroke();
+
+    content.beginPath();
+    content.ellipse(y-120,100,50,25,0,0,2*Math.PI);
+    content.fill();
+    content.stroke();
+
+    content.beginPath();
+    content.ellipse(y,100,50,25,0,0,2*Math.PI);
+    content.fill();
+    content.stroke();
+    
+    content.beginPath();
+    content.ellipse(y-120,75,135,35,0,0,2*Math.PI);
+    content.fill();
+
+    // Face
+    content.fillStyle="lightgrey";
+    content.strokeStyle="white";
+
+    content.beginPath();
+    content.ellipse(y-80,60,10,20,0,0,2*Math.PI);
+    content.fill();
+    content.beginPath();
+    content.ellipse(y-160,60,10,20,0,0,2*Math.PI);
+    content.fill();
+
+    content.beginPath();
+    content.ellipse(y-70,100,4,12,10,0,2*Math.PI);
+    content.fill();
+    content.stroke();
+}
+    // Listeners
+    stix.addEventListener("input",setup);
+    clouds.addEventListener("input",setup);
+}
+window.onload = setup();
+
+</script>
+</body>
+
+</html>

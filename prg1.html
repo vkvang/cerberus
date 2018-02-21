@@ -1,0 +1,69 @@
+<!DOCTYPE html> <!-- This specifies that it is an html document -->
+<!-- "html" tags signify that this starts html code -->
+<html> 
+
+<!-- "body" tags show us what will be displayed on the page -->
+
+
+<body>
+  <!-- This is the initiation of our canvas -->
+  <canvas id="myCanvas" width="600" height="600">
+  your browser doesn't support canvas!
+  </canvas>
+
+  <br/>
+  <!-- Adding slider element from "When do I draw?" tutorial -->
+  <input id="slider" type="range" min="0" max="100" />
+
+</body>
+
+<!-- This is where we will draw -->
+<body>
+<!-- "script" tag denotes where javascript code will go -->
+<script>
+	
+  function draw() {
+    // This grabs a variable pointed to our initiated canvas
+	  var canvas = document.getElementById('myCanvas');
+	  var content = canvas.getContext('2d');
+
+    // Slider element from tutorial (see When do I draw?)
+    var slider = document.getElementById('slider');
+
+    content.clearRect(0, 0, myCanvas.width,myCanvas.height);
+  
+    // Grab x
+    var x = slider.value;
+
+    // Draw a circle
+
+    content.beginPath();
+    content.arc(200,175,x,0,2*Math.PI);
+    //content.stroke();
+    content.fillStyle= 'red';
+    content.fill();
+    content.lineWidth = 5;
+    content.strokeStyle = 'blue';
+    content.stroke();
+
+  }
+
+  window.onload = function() {
+    var slider = document.getElementById('slider');
+    slider.value = 20;
+    draw();
+    slider.addEventListener("input",draw);
+  }
+</script>
+</body>
+
+<!-- This is the Header Section-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <!-- Title tags show us what will be displayed in title bar upon opening the page in browser -->
+  <title>My Coding Assignment: Project #1
+  </title>
+</head>
+
+</html>

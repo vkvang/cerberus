@@ -1,0 +1,241 @@
+<!DOCTYPE html> <!-- This specifies that it is an html document -->
+<!-- "html" tags signify that this starts html code -->
+<html> 
+
+<!-- This is the Header Section-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <!-- Title tags show us what will be displayed in title bar upon opening the page in browser -->
+  <title>My Coding Assignment: Project #2
+  </title> <!-- TODO: Add number --> 
+  <style>
+  body {
+  	background-color: black;
+  }
+  h1 {
+  	background-color: -webkit-animation: colorchange 3s infinite;
+  	animation: colorchange 3s infinite;
+  }
+
+  @-webkit-keyframes colorchange {
+  	0%  {background: #FD0E35;}
+    12%  {background: #FF6037;}
+    25%  {background: #FF9933;}
+    37%  {background: #FFFF66;}
+    50%  {background: #66FF66;}
+    62%	 {background: #AAF0D1;}
+    75%	 {background: #50BFE6;}
+    87%	 {background: #FF6EFF;}
+    100% {background: #FF00CC;}
+  }
+  @keyframes colorchange {
+    0%  {background: #FD0E35;}
+    12%  {background: #FF6037;}
+    25%  {background: #FF9933;}
+    37%  {background: #FFFF66;}
+    50%  {background: #66FF66;}
+    62%	 {background: #AAF0D1;}
+    75%	 {background: #50BFE6;}
+    87%	 {background: #FF6EFF;}
+    100% {background: #FF00CC;}
+  }
+  </style>
+</head>
+
+<!-- "body" tags show us what will be displayed on the page -->
+<body><center>
+<!-- Trying to add audio -->
+<audio autoplay="autoplay" loop>
+  <source src= "Navigator.mp3" type="audio/mpeg"/>
+  Your browser does not support the audio element.
+</audio>
+<br>
+</center>
+</body>
+<!-- This is the initiation of our canvas -->
+<body><center>
+<h1>Music Party!</h1>
+  <canvas id="myCanvas" width="800" height="400">
+  your browser doesn't support canvas!
+  </canvas>
+  <canvas id="ballCanvas" width = "800" height= "800"> 	
+  </canvas>
+  </center>
+</body>
+
+<!-- This is where we will draw -->
+<body>
+<!-- "script" tag denotes where javascript code will go -->
+<script>
+
+
+function setup() {
+	// This grabs a variable pointed to our initiated canvas
+	var canvas = document.getElementById('myCanvas');
+	var content = canvas.getContext('2d');
+	var x = 400;
+
+function drawBack() {
+	// Clear any previous canvas drawings
+	content.clearRect(0, 0, myCanvas.width,myCanvas.height);
+
+    // Color the background
+	var gradient=content.createLinearGradient(550,450,153,10);
+	gradient.addColorStop(0,"darkmagenta");
+	gradient.addColorStop(0.15,"darkorchid");
+	gradient.addColorStop(0.25,"darkviolet");
+	gradient.addColorStop(0.35,"mediumorchid");
+	gradient.addColorStop(0.5,"violet");
+	gradient.addColorStop(0.75,"hotpink");
+	gradient.addColorStop(1,"lavender");
+	content.fillStyle= gradient;
+	content.fillRect(0,300,800,400);
+
+	
+	var gradient=content.createLinearGradient(500,400,103,10);
+	gradient.addColorStop(0,"royalblue");
+	gradient.addColorStop(0.15,"dodgerblue");
+	gradient.addColorStop(0.25,"deepskyblue");
+	gradient.addColorStop(0.35,"skyblue");
+	gradient.addColorStop(0.5,"lightblue");
+	gradient.addColorStop(0.75,"powderblue");
+	gradient.addColorStop(1,"teal");
+	content.fillStyle= gradient;
+	content.fillRect(0,0,800,300);
+	
+}
+
+function drawDisco() {
+	content
+	content.fillStyle= 'silver';
+    content.lineWidth = 3;
+    content.lineCap = 'round';
+    content.strokeStyle = 'lightgrey';
+
+    content.beginPath();
+    content.arc(400,55,35,0,2*Math.PI);
+    content.fill();
+    content.stroke();
+    
+    content.beginPath();
+    content.moveTo(380,35);
+    content.lineTo(380,75);
+    content.moveTo(400,35);
+    content.lineTo(400,75);
+    content.moveTo(420,35);
+    content.lineTo(420,75);
+    content.stroke();
+}
+
+function drawDude() {
+	drawBack();
+
+	// Head
+    content.fillStyle= 'red';
+    content.lineWidth = 3;
+    content.lineCap = 'round';
+    content.strokeStyle = 'crimson';
+    
+    content.beginPath();
+    content.arc(x-20,185,25,0,2*Math.PI);
+    content.fill();
+    content.stroke();
+    
+    // Face
+
+        // eyes
+    content.fillStyle= 'teal';
+    content.strokeStyle = 'lightgrey';
+
+    content.beginPath();
+    content.arc(x-33,180,4,0,2*Math.PI);
+    content.fill();
+    content.stroke();
+    content.beginPath();
+    content.arc(x-7,180,4,0,2*Math.PI);
+    content.fill();
+    content.stroke();
+        
+        // mouth
+    content.strokeStyle = 'white';
+
+    content.beginPath();
+    content.arc(x-20,190,10,0,3/5*Math.PI);
+    content.stroke();
+
+    // Top Hat
+	content.fillStyle= 'darkgrey';
+	content.lineWidth= 5;
+	content.lineCap = 'round';
+	content.strokeStyle= 'black';
+
+	content.beginPath();
+	content.moveTo(x-50,175);
+	content.lineTo(x+10,175);
+	content.rect(x-40,150,40,25);
+	content.fill();
+	content.stroke();
+
+    // Body
+    content.lineWidth = 10;
+    content.lineCap = 'round';
+    content.strokeStyle = 'red';
+
+    content.beginPath();
+    content.moveTo(x-20,210);
+    content.lineTo(x-20,260);
+    
+        // Arms
+    function drawArms() {
+    content.moveTo(x-20,233);
+    content.lineTo(x-40,213);
+    content.moveTo(x-20,233);
+    content.lineTo(x,213);
+	}
+    content.save();
+    drawArms();
+    content.rotate(Math.PI/2);
+    content.restore();
+
+        // Legs
+    content.moveTo(x-20,260);
+    content.lineTo(x-40,300);
+    content.moveTo(x-20,260);
+    content.lineTo(x,300);
+    content.stroke();
+}    
+function animate() {
+	drawDude();
+	drawDisco();
+    x = (x+5)% 900;
+	window.requestAnimationFrame(animate);
+}
+
+window.requestAnimationFrame(animate);
+}
+window.onload = setup();
+</script>
+<!-- Sadly I wanted to finish the disco ball to spin, but ran out of time. I underestimated the time needed to do so, given my experience with html and javascript. -->
+<script>
+ function drawBall(){
+      var canvas = document.getElementById("ballCanvas");
+      if(canvas.getContext){
+        content2 = canvas.getContext("2d");
+        content2.strokeStyle = 'silver';
+        content2.fillStyle = 'white';
+        content2.beginPath();
+        content2.clearRect(0, 0, 800, 800);
+        content2.translate(400,400);
+        content2.rotate(Math.PI / -90);
+        content2.translate(-400, -400);
+        content2.arc(400,65,10,0,2*Math.PI);
+        content2.stroke();
+        content2.fill();
+      }
+    }
+    setInterval(drawBall,5);
+</script>
+</body>
+
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html> <!-- This specifies that it is an html document -->
+<!-- "html" tags signify that this starts html code -->
+<html> 
+
+<!-- This is the Header Section-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <!-- Title tags show us what will be displayed in title bar upon opening the page in browser -->
+  <title>My Coding Assignment: Project #3
+  </title> <!-- TODO: Add number --> 
+  <style>
+  body {
+  	background-color: white;
+    background-image: url("https://i.pinimg.com/originals/8e/4a/5a/8e4a5ace4e9c81e9291bc90e1ba07cfd.jpg");
+    background-position: 50% 0%;
+    background-repeat: no-repeat;
+    background-size: 125%;
+  }
+  h1 {
+    color: silver;
+    font-family: verdana;
+    font-size: 200%;
+  	/*background-color: -webkit-animation: colorchange 3s infinite;*/
+  	animation: colorchange 3s infinite;
+  }
+
+  @-webkit-keyframes colorchange {
+  	0%  {background: #FD0E35;}
+    12%  {background: #FF6037;}
+    25%  {background: #FF9933;}
+    37%  {background: #FFFF66;}
+    50%  {background: #66FF66;}
+    62%	 {background: #AAF0D1;}
+    75%	 {background: #50BFE6;}
+    87%	 {background: #FF6EFF;}
+    100% {background: #FF00CC;}
+  }
+  @keyframes colorchange {
+    0%  {background: #FD0E35;}
+    12%  {background: #FF6037;}
+    25%  {background: #FF9933;}
+    37%  {background: #FFFF66;}
+    50%  {background: #66FF66;}
+    62%	 {background: #AAF0D1;}
+    75%	 {background: #50BFE6;}
+    87%	 {background: #FF6EFF;}
+    100% {background: #FF00CC;}
+  }
+  </style>
+</head>
+
+<!-- "body" tags show us what will be displayed on the page -->
+
+<!-- This is the initiation of our canvas -->
+<body><center>
+  <h1> My 3D Tranform </h1> <!-- TODO: Add a title at top of page -->
+  <canvas id="myCanvas" width="800" height="500" style="border:1px solid #000;">
+  your browser doesn't support canvas!
+  </canvas>
+  <br/>
+  <!-- Calls a slider, so can adapt to slider value -->
+  <input id="mySlider1" type="range" min="-100" max="100" />
+  <input id="mySlider2" type="range" min="0" max="400" />
+  <br/>
+    <!-- Calling upon the twgl repository -->
+  <script src="http://graphics.cs.wisc.edu/JS/twgl-full.min.js"></script>
+  </center>
+</body>
+
+<!-- This is where we will draw -->
+<body>
+<!-- "script" tag denotes where javascript code will go -->
+<script>
+
+function setup() { "use strict";
+  var canvas = document.getElementById('myCanvas');
+  var context = canvas.getContext('2d');
+
+  // Change the opacity of myCanvas
+  canvas.style.opacity = '0.75';
+
+  var m4 = twgl.m4;
+  
+  var slider1 = document.getElementById('mySlider1');
+  slider1.value = 0;
+  var slider2 = document.getElementById('mySlider2');
+  slider2.value = 0;
+                
+  function moveToTx(x,y,z,Tx) {
+    var loc = [x,y,z];
+    var locTx = m4.transformPoint(Tx,loc);
+    context.moveTo(locTx[0],locTx[1]);
+  }
+
+  function lineToTx(x,y,z,Tx) {
+    var loc = [x,y,z];
+    var locTx = m4.transformPoint(Tx,loc);
+    context.lineTo(locTx[0],locTx[1]);
+  }
+  function drawBack(){
+    var gradient=context.createLinearGradient(550,450,153,10);
+    gradient.addColorStop(0,"darkmagenta");
+    gradient.addColorStop(0.15,"darkorchid");
+    gradient.addColorStop(0.25,"darkviolet");
+    gradient.addColorStop(0.35,"mediumorchid");
+    gradient.addColorStop(0.5,"violet");
+    gradient.addColorStop(0.75,"hotpink");
+    gradient.addColorStop(1,"lavender");
+    context.fillStyle= gradient;
+    context.fillRect(0,300,800,500);
+
+
+    var gradient2=context.createLinearGradient(500,400,103,10);
+    gradient2.addColorStop(0,"royalblue");
+    gradient2.addColorStop(0.15,"dodgerblue");
+    gradient2.addColorStop(0.25,"deepskyblue");
+    gradient2.addColorStop(0.35,"skyblue");
+    gradient2.addColorStop(0.5,"lightblue");
+    gradient2.addColorStop(0.75,"powderblue");
+    gradient2.addColorStop(1,"teal");
+    context.fillStyle= gradient2;
+
+    context.fillRect(0,0,800,300);
+
+  }
+                
+  function drawAxes(Tx) {
+
+    context.lineWidth = 3;
+    context.lineCap = 'round';
+    
+    context.strokeStyle = 'red';
+    context.beginPath();
+    // A little cross on the front face, for identification
+    moveToTx(0,0,0,Tx);lineToTx(100,0,0,Tx);context.stroke();
+    
+    context.strokeStyle = 'blue';
+    context.beginPath();
+    moveToTx(0,0,0,Tx);lineToTx(0,150,0,Tx);context.stroke();
+
+    context.strokeStyle = 'green';
+    context.beginPath();
+    moveToTx(0,0,0,Tx);lineToTx(0,0,200,Tx);context.stroke();
+
+  }
+
+  // function drawPlane(Tx) {
+  //   // Draw a plane model. Note that we have the nose pointing towards the negative z-axis,
+  //   // so we can use the lookAt transform to place it into the workd
+    
+  //   //context.fillStyle= 'silver';
+  //   context.lineWidth = 3;
+  //   context.lineCap = 'round';
+  //   context.strokeStyle = 'lightgrey';
+
+  //   context.beginPath();
+  //   moveToTx(-10,  0, 50,Tx);lineToTx(-10,  0, 10,Tx);lineToTx(-50,  0, 20,Tx);
+  //   lineToTx(-10,  0,-10,Tx);lineToTx(-10,  0,-50,Tx);lineToTx(  0,  0,-60,Tx);
+  //   lineToTx( 10,  0,-50,Tx);lineToTx( 10,  0,-10,Tx);lineToTx( 50,  0, 20,Tx);
+  //   lineToTx( 10,  0, 10,Tx);lineToTx( 10,  0, 50,Tx);lineToTx(  0, 20, 50,Tx);
+
+  //   context.closePath();
+  //   context.stroke();
+  // }
+
+  function drawStar(Tx) {
+
+    // Stylings
+    context.lineWidth = 3;
+    context.lineCap = 'round';
+    context.fillStyle = 'silver';
+    context.strokeStyle = 'lightgrey';
+
+    // Begin to draw Star
+
+    // Vertical XY-Plane
+    context.beginPath();
+    moveToTx( 0, -50, 0, Tx);
+    lineToTx( 5, -10, 0 ,Tx);
+    lineToTx( 25, 0, 0, Tx);
+    lineToTx( 5, 10, 0, Tx);
+    lineToTx( 0, 50, 0, Tx);
+    lineToTx( -5, 10, 0, Tx);
+    lineToTx( -25, 0, 0 , Tx);
+    lineToTx( -5, -10, 0, Tx);
+    lineToTx( 0, -50 , 0, Tx);
+
+    // Horizontal XZ-Plane
+    moveToTx( 0, 0, -50, Tx);
+    lineToTx( 5, 0, -10 ,Tx);
+    lineToTx( 25, 0, 0, Tx);
+    lineToTx( 5, 0, 10, Tx);
+    lineToTx( 0, 0, 50, Tx);
+    lineToTx( -5, 0, 10, Tx);
+    lineToTx( -25, 0, 0 , Tx);
+    lineToTx( -5, 0, -10, Tx);
+    lineToTx( 0, 0 , -50, Tx);
+
+    // // Shadow Effect
+    // context.shadowOffsetX = 10;
+    // context.shadowOffsetY = 10;
+    // context.shadowBlur    = 4;
+    // context.shadowColor   = 'rgba(180, 180, 180, 0.8)';
+
+    context.closePath();
+    context.fill();
+    context.stroke();
+
+  }
+
+  // This is the function C(t)
+  function curveValue(t){
+    var result = [100.0*Math.cos(2.0*Math.PI*t),80.0*t,100.0*Math.sin(2.0*Math.PI*t)];
+    return result;
+  }
+                  
+  // And this is the derivative C'(t) -- which is the tangent vector
+  function curveTangent(t){
+    var result = [-200.0*Math.PI*Math.sin(2.0*Math.PI*t),80.0,200*Math.PI*Math.cos(2.0*Math.PI*t)];
+    return result;
+  }
+                  
+  function draw() {
+    // hack to clear the canvas fast
+    canvas.width = canvas.width;
+    
+    var angle = slider1.value*0.01*Math.PI;
+    var t = slider2.value*0.01;
+    var axis = [1,1,1];
+  
+    var eye=[500*Math.cos(angle),250,500*Math.sin(angle)];
+    var target=[0,100,0];
+    var up=[0,1,0];
+    
+    var Tmodel_trans=m4.translation(curveValue(t));
+    var Tmodel_rot=m4.lookAt([0,0,0],curveTangent(t),up);
+    var Tmodel=m4.multiply(Tmodel_rot,Tmodel_trans);
+    
+    var Tcamera=m4.inverse(m4.lookAt(eye,target,up));
+    var Tprojection=m4.perspective(Math.PI/4,1.0,.5,20);
+    var Tviewport=m4.multiply(m4.scaling([250,-250,200]),m4.translation([400,200,0]));
+    
+    var Tcpv=m4.multiply(m4.multiply(Tcamera,Tprojection),Tviewport);
+    var Tmcpv=m4.multiply(Tmodel,Tcpv);
+
+    drawBack();
+    drawStar(Tmcpv);
+    drawAxes(Tcpv);
+
+  }
+
+  slider1.addEventListener("input",draw);
+  slider2.addEventListener("input",draw);
+  draw();
+
+}
+window.onload = setup;
+
+
+</script>
+</body>
+
+</html>
